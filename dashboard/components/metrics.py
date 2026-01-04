@@ -19,7 +19,7 @@ def render_video_header(video_metadata: Dict):
     
     with col1:
         if video_metadata.get("thumbnail_url"):
-            st.image(video_metadata["thumbnail_url"], use_container_width=True)
+            st.image(video_metadata["thumbnail_url"], width='stretch')
     
     with col2:
         st.markdown(f"### {video_metadata.get('title', 'Unknown Video')}")

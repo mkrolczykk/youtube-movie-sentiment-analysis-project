@@ -43,7 +43,7 @@ def render_sidebar() -> Tuple[Optional[str], int, Optional[str], bool]:
         )
         
         # Validate API key button
-        if api_key and st.button("Validate Key", use_container_width=True):
+        if api_key and st.button("Validate Key", width='stretch'):
             with st.spinner("Validating..."):
                 client = YouTubeClient(api_key)
                 is_valid, message = client.validate_api_key()
@@ -106,7 +106,7 @@ def render_sidebar() -> Tuple[Optional[str], int, Optional[str], bool]:
         # Analyze Button
         analyze_clicked = st.button(
             "🚀 Analyze Comments",
-            use_container_width=True,
+            width='stretch',
             type="primary",
             disabled=not (video_url and api_key)
         )

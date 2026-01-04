@@ -182,15 +182,22 @@ class TextAnalytics:
             texts,
             languages=[language] * len(texts),
             clean=True,
-            tokenize=False,
+            tokenize=True,
             remove_stops=True
         )
         
+        # Filter out empty strings
+        processed = [p for p in processed if p.strip()]
+        
+        if not processed:
+            return []
+        
         # Use CountVectorizer for n-gram extraction
+        # Note: stopwords already removed during preprocessing
         vectorizer = CountVectorizer(
             ngram_range=(n, n),
             max_features=top_k * 2,  # Get more to filter
-            stop_words=LANGUAGE_NAMES.get(language, "english")
+            token_pattern=r'(?u)\b\w+\b'  # Include single-character tokens
         )
         
         try:
@@ -204,8 +211,13 @@ class TextAnalytics:
             return [
                 (ngram_names[i], int(ngram_counts[i]))
                 for i in sorted_indices
+                if ngram_counts[i] > 0
             ]
-        except Exception:
+        except ValueError as e:
+            # Not enough data or vocabulary is empty
+            return []
+        except Exception as e:
+            print(f"N-gram extraction error: {e}")
             return []
     
     def extract_keywords(
@@ -230,15 +242,22 @@ class TextAnalytics:
             texts,
             languages=[language] * len(texts),
             clean=True,
-            tokenize=False,
+            tokenize=True,
             remove_stops=True
         )
         
+        # Filter out empty strings
+        processed = [p for p in processed if p.strip()]
+        
+        if not processed:
+            return []
+        
         # TF-IDF extraction
+        # Note: stopwords already removed during preprocessing
         vectorizer = TfidfVectorizer(
             max_features=top_k * 2,
-            stop_words=LANGUAGE_NAMES.get(language, "english"),
-            ngram_range=(1, 2)
+            ngram_range=(1, 2),
+            token_pattern=r'(?u)\b\w+\b'
         )
         
         try:
@@ -256,7 +275,11 @@ class TextAnalytics:
                 for i in sorted_indices
                 if avg_scores[i] > 0
             ]
-        except Exception:
+        except ValueError as e:
+            # Not enough data or vocabulary is empty
+            return []
+        except Exception as e:
+            print(f"Keyword extraction error: {e}")
             return []
     
     def extract_topics(
@@ -286,20 +309,32 @@ class TextAnalytics:
             texts,
             languages=[language] * len(texts),
             clean=True,
-            tokenize=False,
+            tokenize=True,
             remove_stops=True
         )
         
+        # Filter out empty strings
+        processed = [p for p in processed if p.strip()]
+        
+        if len(processed) < n_topics:
+            return []
+        
         # Vectorize
+        # Note: stopwords already removed during preprocessing
         vectorizer = CountVectorizer(
             max_features=1000,
-            stop_words=LANGUAGE_NAMES.get(language, "english"),
             max_df=0.95,
-            min_df=2
+            min_df=1,  # Reduced from 2 to work with smaller datasets
+            token_pattern=r'(?u)\b\w+\b'
         )
         
         try:
             doc_term_matrix = vectorizer.fit_transform(processed)
+            
+            # Check if we have enough features
+            if doc_term_matrix.shape[1] < n_topics:
+                return []
+            
             feature_names = vectorizer.get_feature_names_out()
             
             # LDA model
@@ -326,7 +361,11 @@ class TextAnalytics:
             
             return topics
             
-        except Exception:
+        except ValueError as e:
+            # Not enough data
+            return []
+        except Exception as e:
+            print(f"Topic extraction error: {e}")
             return []
     
     def get_document_topics(
@@ -354,20 +393,30 @@ class TextAnalytics:
             texts,
             languages=[language] * len(texts),
             clean=True,
-            tokenize=False,
+            tokenize=True,
             remove_stops=True
         )
+        
+        # Filter out empty strings
+        processed = [p for p in processed if p.strip()]
+        
+        if len(processed) < n_topics:
+            return [], []
         
         # Vectorize
         vectorizer = CountVectorizer(
             max_features=1000,
-            stop_words=LANGUAGE_NAMES.get(language, "english"),
             max_df=0.95,
-            min_df=2
+            min_df=1,
+            token_pattern=r'(?u)\b\w+\b'
         )
         
         try:
             doc_term_matrix = vectorizer.fit_transform(processed)
+            
+            if doc_term_matrix.shape[1] < n_topics:
+                return [], []
+            
             feature_names = vectorizer.get_feature_names_out()
             
             # LDA
@@ -391,7 +440,8 @@ class TextAnalytics:
             
             return doc_topics.tolist(), topics
             
-        except Exception:
+        except Exception as e:
+            print(f"Document topics error: {e}")
             return [], []
     
     def get_word_frequency(
