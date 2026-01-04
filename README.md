@@ -1,12 +1,12 @@
-# 🎬 YouTube Movie Sentiment Analysis
+# YouTube Movie Sentiment Analysis
 
-Advanced sentiment analysis application for YouTube video comments with multi-language support (Polish/English), featuring an interactive Streamlit dashboard.
+Sentiment analysis application for YouTube video comments with multi-language support (Polish/English), featuring an interactive Streamlit dashboard.
 
 ![Python](https://img.shields.io/badge/Python-3.9%2B-blue)
 ![Streamlit](https://img.shields.io/badge/Streamlit-1.28%2B-red)
 ![Transformers](https://img.shields.io/badge/Transformers-4.35%2B-orange)
 
-## 📋 Project Overview
+## Project Overview
 
 This application was created for the **Eksploracja Danych Tekstowych (Text Data Mining)** course as part of the Data Science Master's program.
 
@@ -19,7 +19,7 @@ This application was created for the **Eksploracja Danych Tekstowych (Text Data 
 - 📈 **Advanced Analytics**: TF-IDF keywords, n-grams, LDA topics, emoji analysis
 - 💾 **Export Functionality**: Download results as CSV
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -69,7 +69,7 @@ This application was created for the **Eksploracja Danych Tekstowych (Text Data 
 6. **Open in browser**
    Navigate to `http://localhost:8501`
 
-## 🔑 YouTube API Key Setup
+## YouTube API Key Setup
 
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
 2. Create a new project
@@ -77,7 +77,7 @@ This application was created for the **Eksploracja Danych Tekstowych (Text Data 
 4. Create credentials → API Key
 5. Enter the key in the application sidebar
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 youtube-movie-sentiment-analysis-project/
@@ -102,7 +102,7 @@ youtube-movie-sentiment-analysis-project/
 └── README.md
 ```
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 | Component | Technology |
 |-----------|-----------|
@@ -114,7 +114,7 @@ youtube-movie-sentiment-analysis-project/
 | Topic Modeling | scikit-learn (LDA) |
 | API | Google YouTube Data API v3 |
 
-## 📊 Dashboard Sections
+## Dashboard Sections
 
 ### 1. Sentiment Overview
 
@@ -150,7 +150,7 @@ youtube-movie-sentiment-analysis-project/
 - Sort by sentiment, likes, length
 - Filter by sentiment and language
 
-## 📝 Usage Example
+## Usage Example
 
 1. Enter your YouTube API key in the sidebar
 2. Paste a YouTube video URL (e.g., movie trailer)
@@ -158,7 +158,7 @@ youtube-movie-sentiment-analysis-project/
 4. Click "Analyze Comments"
 5. Explore the results across different tabs
 
-## 🌐 Language Support
+## Language Support
 
 The application automatically detects whether comments are in Polish or English and applies appropriate:
 
@@ -168,18 +168,13 @@ The application automatically detects whether comments are in Polish or English 
 
 The multilingual BERT model handles sentiment analysis for both languages seamlessly.
 
-## ⚠️ Limitations
+## Limitations
 
 - YouTube API has daily quota limits (~10,000 units/day)
 - Comments must be enabled on the video
 - First run downloads ~500MB of transformer models
 - Topic modeling requires at least 10 comments
 
-## 📄 License
+## License
 
 This project was created for educational purposes as part of the Data Science Master's program.
-
-## 👤 Author
-
-Created for **Eksploracja Danych Tekstowych** course  
-Data Science, 2nd Year Master's Program
