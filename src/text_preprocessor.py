@@ -93,13 +93,78 @@ class TextPreprocessor:
                 # Fallback to English if language not available
                 self._stopwords[lang_code] = set(stopwords.words("english"))
         
-        # Add common Polish stopwords that might be missing
+        # Add comprehensive Polish stopwords (function words, prepositions, conjunctions, particles)
+        # These are words that don't carry semantic meaning in text analysis
         polish_extras = {
-            "też", "oraz", "ale", "czy", "jak", "tak", "nie", "się", "jest",
-            "może", "więc", "tylko", "jeszcze", "już", "bardzo", "gdzie",
-            "kiedy", "kto", "co", "ten", "ta", "to", "być", "mieć"
+            # Prepositions (przyimki)
+            "w", "we", "na", "do", "z", "ze", "za", "przed", "po", "od", "bez", "dla", 
+            "przez", "przy", "o", "u", "nad", "pod", "między", "pomiędzy", "wśród",
+            "oprócz", "około", "koło", "obok", "wobec", "według", "dzięki", "mimo",
+            "podczas", "poprzez", "wzdłuż", "naprzeciw", "względem", "ponad", "spod",
+            
+            # Conjunctions (spójniki)
+            "i", "a", "ale", "lub", "albo", "czy", "że", "żeby", "bo", "ponieważ",
+            "gdyż", "więc", "oraz", "ani", "jednak", "lecz", "zatem", "dlatego",
+            "choć", "chociaż", "jeśli", "jeżeli", "gdy", "kiedy", "dopóki", "zanim",
+            
+            # Pronouns (zaimki)
+            "ja", "ty", "on", "ona", "ono", "my", "wy", "oni", "one", "się",
+            "mnie", "mi", "mną", "ciebie", "ci", "cię", "tobą", "jego", "jej", "jemu",
+            "go", "mu", "ją", "nią", "nim", "nas", "nam", "nami", "was", "wam", "wami",
+            "ich", "im", "nimi", "siebie", "sobie", "sobą",
+            "ten", "ta", "to", "te", "ci", "tamten", "tamta", "tamto",
+            "który", "która", "które", "którzy", "którego", "której", "których",
+            "co", "kto", "czego", "kogo", "czemu", "komu", "czym", "kim",
+            "jaki", "jaka", "jakie", "jacyś", "jakiś", "jakieś",
+            "każdy", "każda", "każde", "wszyscy", "wszystko", "wszystkie",
+            "sam", "sama", "samo", "sami", "same",
+            "nikt", "nic", "żaden", "żadna", "żadne",
+            "inny", "inna", "inne", "inni",
+            "swój", "swoja", "swoje", "swojego", "swojej", "swoich",
+            "mój", "moja", "moje", "mojego", "mojej", "moich",
+            "twój", "twoja", "twoje", "twojego", "twojej", "twoich",
+            "nasz", "nasza", "nasze", "naszego", "naszej", "naszych",
+            "wasz", "wasza", "wasze", "waszego", "waszej", "waszych",
+            
+            # Particles and adverbs (partykuły i przysłówki)
+            "tak", "nie", "też", "tylko", "już", "jeszcze", "bardzo", "bardziej",
+            "najbardziej", "może", "chyba", "pewnie", "właśnie", "przecież", "jednak",
+            "nawet", "prawie", "raczej", "całkiem", "dosyć", "dość", "trochę",
+            "zawsze", "nigdy", "często", "rzadko", "czasem", "czasami",
+            "teraz", "wtedy", "potem", "przedtem", "później", "wcześniej",
+            "tutaj", "tam", "tu", "gdzie", "gdzieś", "nigdzie", "wszędzie",
+            "jak", "jakby", "jakoś", "tak", "inaczej",
+            "dlaczego", "czemu", "dlatego", "po co",
+            "ile", "tyle", "wiele", "mało", "dużo", "kilka", "parę",
+            
+            # Auxiliary verbs and common verbs (czasowniki posiłkowe)
+            "być", "jest", "są", "był", "była", "było", "byli", "były",
+            "będzie", "będą", "będę", "będziesz", "będziemy", "będziecie",
+            "mieć", "ma", "mam", "masz", "mamy", "macie", "mają",
+            "miał", "miała", "miało", "mieli", "miały",
+            "można", "trzeba", "należy", "warto", "wolno",
+            "zostać", "stać", "robić", "zrobić", "mówić", "powiedzieć",
+            
+            # Other common function words
+            "to", "tego", "temu", "tym", "ta", "tej", "tą",
+            "jako", "czyli", "np", "itd", "itp", "etc",
+            "pan", "pani", "państwo", "panie", "panowie",
+            "no", "ot", "hej", "cześć", "ok", "okej",
+            "xd", "xdd", "haha", "lol", "omg",  # Common internet expressions
         }
         self._stopwords.get("pl", set()).update(polish_extras)
+        
+        # Also add some common English function words that might be mixed in Polish comments
+        english_extras = {
+            "the", "a", "an", "is", "are", "was", "were", "be", "been",
+            "i", "you", "he", "she", "it", "we", "they", "me", "him", "her",
+            "my", "your", "his", "its", "our", "their",
+            "this", "that", "these", "those",
+            "and", "or", "but", "if", "then", "so", "as", "of", "to", "for",
+            "with", "on", "in", "at", "by", "from",
+            "lol", "xd", "omg", "wtf", "btw", "idk",  # Internet slang
+        }
+        self._stopwords.get("en", set()).update(english_extras)
     
     def _load_spacy_models(self):
         """Lazy load spaCy models."""
@@ -223,7 +288,24 @@ class TextPreprocessor:
         if custom_stopwords:
             stop_set = stop_set | custom_stopwords
         
-        return [token for token in tokens if token.lower() not in stop_set]
+        # Filter tokens: remove stopwords, very short words, and non-alphabetic tokens
+        filtered = []
+        for token in tokens:
+            token_lower = token.lower()
+            # Skip stopwords
+            if token_lower in stop_set:
+                continue
+            # Skip very short words (1-2 chars) unless they're meaningful
+            if len(token) < 3:
+                continue
+            # Skip pure numbers
+            if token.isdigit():
+                continue
+            # Keep tokens with at least some letters
+            if any(c.isalpha() for c in token):
+                filtered.append(token)
+        
+        return filtered
     
     def lemmatize(self, text: str, language: str = "en") -> str:
         """
