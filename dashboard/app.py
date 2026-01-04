@@ -37,7 +37,11 @@ from dashboard.components.charts import (
     create_topic_scatter,
     create_comment_length_sentiment_scatter,
     create_topics_bar_chart,
-    create_emoji_chart
+    create_emoji_chart,
+    create_sentiment_over_time_chart,
+    create_engagement_sentiment_chart,
+    create_top_commenters_chart,
+    create_sentiment_confidence_chart
 )
 from dashboard.components.wordcloud import render_wordcloud_section, render_comparison_wordclouds
 
@@ -173,7 +177,7 @@ def run_analysis(video_url: str, num_comments: int, api_key: str):
         df = pd.DataFrame({
             "text": texts,
             "author": [c["author"] for c in comments],
-            "published_at": [c["published_at"] for c in comments],
+            "published_at": pd.to_datetime([c["published_at"] for c in comments]),
             "like_count": [c["like_count"] for c in comments],
             "language": languages,
             "sentiment_score": [r.score for r in sentiment_results],
@@ -255,6 +259,29 @@ def render_results():
     with col2:
         fig = create_comment_length_sentiment_scatter(df)
         st.plotly_chart(fig, width='stretch', key="comment_length_scatter")
+    
+    st.divider()
+    
+    # Comments Insights section
+    st.markdown("## 📈 Comments Insights")
+    
+    # Sentiment over time
+    fig = create_sentiment_over_time_chart(df)
+    st.plotly_chart(fig, width='stretch', key="sentiment_over_time")
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        fig = create_engagement_sentiment_chart(df)
+        st.plotly_chart(fig, width='stretch', key="engagement_sentiment")
+    
+    with col2:
+        fig = create_sentiment_confidence_chart(df)
+        st.plotly_chart(fig, width='stretch', key="sentiment_confidence")
+    
+    with col3:
+        fig = create_top_commenters_chart(df)
+        st.plotly_chart(fig, width='stretch', key="top_commenters")
     
     st.divider()
     
@@ -379,23 +406,24 @@ def render_results():
     with col3:
         sort_by = st.selectbox(
             "Sort by",
-            options=["sentiment_score", "like_count", "word_count"],
-            format_func=lambda x: {"sentiment_score": "Sentiment", "like_count": "Likes", "word_count": "Length"}[x]
+            options=["published_at", "sentiment_score", "like_count", "word_count"],
+            format_func=lambda x: {"published_at": "Date (Newest)", "sentiment_score": "Sentiment", "like_count": "Likes", "word_count": "Length"}[x]
         )
     
     # Filter and display
     filtered_df = df[
         (df["sentiment_label"].isin(sentiment_filter)) &
         (df["language"].isin(lang_filter))
-    ].sort_values(sort_by, ascending=False)
+    ].sort_values(sort_by, ascending=(sort_by != "published_at"))
     
-    # Display styled dataframe
+    # Display styled dataframe with timestamp
     st.dataframe(
-        filtered_df[["text", "author", "sentiment_score", "sentiment_label", "language", "like_count"]].head(100),
+        filtered_df[["text", "author", "published_at", "sentiment_score", "sentiment_label", "language", "like_count"]].head(100),
         width='stretch',
         column_config={
             "text": st.column_config.TextColumn("Comment", width="large"),
             "author": st.column_config.TextColumn("Author", width="medium"),
+            "published_at": st.column_config.DatetimeColumn("Posted", format="DD/MM/YYYY HH:mm"),
             "sentiment_score": st.column_config.NumberColumn("Score", format="%.2f"),
             "sentiment_label": st.column_config.TextColumn("Sentiment"),
             "language": st.column_config.TextColumn("Lang"),

@@ -148,7 +148,7 @@ class YouTubeClient:
                     maxResults=request_count,
                     pageToken=next_page_token,
                     textFormat="plainText",
-                    order="relevance"
+                    order="time"  # Fetch newest comments first
                 )
                 response = request.execute()
                 
