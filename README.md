@@ -1,6 +1,6 @@
 # YouTube Movie Sentiment Analysis
 
-Sentiment analysis application for YouTube video comments with multi-language support (Polish/English), featuring an interactive Streamlit dashboard.
+Streamlit dashboard for sentiment analysis of YouTube video comments with multi-language support (Polish/English).
 
 ![Python](https://img.shields.io/badge/Python-3.9%2B-blue)
 ![Streamlit](https://img.shields.io/badge/Streamlit-1.28%2B-red)
@@ -8,7 +8,7 @@ Sentiment analysis application for YouTube video comments with multi-language su
 
 ## Project Overview
 
-This application was created for the **Eksploracja Danych Tekstowych (Text Data Mining)** course as part of the Data Science Master's program.
+This Streamlit dashboard was created for the **Eksploracja Danych Tekstowych (Text Data Mining)** course as part of the Data Science Master's program.
 
 ### Features
 
@@ -18,6 +18,30 @@ This application was created for the **Eksploracja Danych Tekstowych (Text Data 
 - 💬 **Comment Explorer**: Filter, sort, and explore individual comments
 - 📈 **Advanced Analytics**: TF-IDF keywords, n-grams, LDA topics, emoji analysis
 - 💾 **Export Functionality**: Download results as CSV
+
+## UI Overview
+
+### Start screen
+
+![docs/start-screen.png](docs/start-screen.png)
+
+### Analysis results
+
+![docs/analysis-results-1.png](docs/analysis-results-1.png)
+
+![docs/analysis-results-2.png](docs/analysis-results-2.png)
+
+![docs/analysis-results-3.png](docs/analysis-results-3.png)
+
+![docs/analysis-results-4.png](docs/analysis-results-4.png)
+
+![docs/analysis-results-5.png](docs/analysis-results-5.png)
+
+![docs/analysis-results-6.png](docs/analysis-results-6.png)
+
+![docs/analysis-results-7.png](docs/analysis-results-7.png)
+
+![docs/analysis-results-8.png](docs/analysis-results-8.png)
 
 ## Quick Start
 
@@ -174,7 +198,3 @@ The multilingual BERT model handles sentiment analysis for both languages seamle
 - Comments must be enabled on the video
 - First run downloads ~500MB of transformer models
 - Topic modeling requires at least 10 comments
-
-## License
-
-This project was created for educational purposes as part of the Data Science Master's program.
