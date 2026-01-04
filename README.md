@@ -23,7 +23,7 @@ This application was created for the **Eksploracja Danych Tekstowych (Text Data 
 
 ### Prerequisites
 
-- Python 3.9 or higher
+- Python 3.11.XX (tested with 3.11.9)
 - YouTube Data API v3 key ([Get one here](https://console.cloud.google.com/))
 
 ### Installation

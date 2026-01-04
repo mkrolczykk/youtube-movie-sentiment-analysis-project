@@ -84,87 +84,52 @@ class TextPreprocessor:
             self._load_spacy_models()
     
     def _load_stopwords(self):
-        """Load stopwords for all supported languages."""
+        """
+        Load stopwords for all supported languages using professional libraries.
+        
+        Uses stopwordsiso for comprehensive, ISO-standard stopword lists.
+        Falls back to NLTK and spaCy stopwords as backup.
+        """
+        import stopwordsiso
+        
         for lang_code in SUPPORTED_LANGUAGES:
+            stopword_set = set()
+            
+            # Primary source: stopwordsiso (comprehensive, ISO-standard)
+            if stopwordsiso.has_lang(lang_code):
+                stopword_set.update(stopwordsiso.stopwords(lang_code))
+            
+            # Secondary source: NLTK stopwords
             lang_name = LANGUAGE_NAMES.get(lang_code, "english")
             try:
-                self._stopwords[lang_code] = set(stopwords.words(lang_name))
+                stopword_set.update(stopwords.words(lang_name))
             except OSError:
-                # Fallback to English if language not available
-                self._stopwords[lang_code] = set(stopwords.words("english"))
+                pass  # Language not available in NLTK
+            
+            # Tertiary source: spaCy stopwords (if model loaded)
+            try:
+                import spacy
+                model_name = SPACY_MODELS.get(lang_code)
+                if model_name:
+                    try:
+                        nlp = spacy.load(model_name, disable=["parser", "ner"])
+                        stopword_set.update(nlp.Defaults.stop_words)
+                    except OSError:
+                        pass  # Model not installed
+            except ImportError:
+                pass
+            
+            self._stopwords[lang_code] = stopword_set
         
-        # Add comprehensive Polish stopwords (function words, prepositions, conjunctions, particles)
-        # These are words that don't carry semantic meaning in text analysis
-        polish_extras = {
-            # Prepositions (przyimki)
-            "w", "we", "na", "do", "z", "ze", "za", "przed", "po", "od", "bez", "dla", 
-            "przez", "przy", "o", "u", "nad", "pod", "między", "pomiędzy", "wśród",
-            "oprócz", "około", "koło", "obok", "wobec", "według", "dzięki", "mimo",
-            "podczas", "poprzez", "wzdłuż", "naprzeciw", "względem", "ponad", "spod",
-            
-            # Conjunctions (spójniki)
-            "i", "a", "ale", "lub", "albo", "czy", "że", "żeby", "bo", "ponieważ",
-            "gdyż", "więc", "oraz", "ani", "jednak", "lecz", "zatem", "dlatego",
-            "choć", "chociaż", "jeśli", "jeżeli", "gdy", "kiedy", "dopóki", "zanim",
-            
-            # Pronouns (zaimki)
-            "ja", "ty", "on", "ona", "ono", "my", "wy", "oni", "one", "się",
-            "mnie", "mi", "mną", "ciebie", "ci", "cię", "tobą", "jego", "jej", "jemu",
-            "go", "mu", "ją", "nią", "nim", "nas", "nam", "nami", "was", "wam", "wami",
-            "ich", "im", "nimi", "siebie", "sobie", "sobą",
-            "ten", "ta", "to", "te", "ci", "tamten", "tamta", "tamto",
-            "który", "która", "które", "którzy", "którego", "której", "których",
-            "co", "kto", "czego", "kogo", "czemu", "komu", "czym", "kim",
-            "jaki", "jaka", "jakie", "jacyś", "jakiś", "jakieś",
-            "każdy", "każda", "każde", "wszyscy", "wszystko", "wszystkie",
-            "sam", "sama", "samo", "sami", "same",
-            "nikt", "nic", "żaden", "żadna", "żadne",
-            "inny", "inna", "inne", "inni",
-            "swój", "swoja", "swoje", "swojego", "swojej", "swoich",
-            "mój", "moja", "moje", "mojego", "mojej", "moich",
-            "twój", "twoja", "twoje", "twojego", "twojej", "twoich",
-            "nasz", "nasza", "nasze", "naszego", "naszej", "naszych",
-            "wasz", "wasza", "wasze", "waszego", "waszej", "waszych",
-            
-            # Particles and adverbs (partykuły i przysłówki)
-            "tak", "nie", "też", "tylko", "już", "jeszcze", "bardzo", "bardziej",
-            "najbardziej", "może", "chyba", "pewnie", "właśnie", "przecież", "jednak",
-            "nawet", "prawie", "raczej", "całkiem", "dosyć", "dość", "trochę",
-            "zawsze", "nigdy", "często", "rzadko", "czasem", "czasami",
-            "teraz", "wtedy", "potem", "przedtem", "później", "wcześniej",
-            "tutaj", "tam", "tu", "gdzie", "gdzieś", "nigdzie", "wszędzie",
-            "jak", "jakby", "jakoś", "tak", "inaczej",
-            "dlaczego", "czemu", "dlatego", "po co",
-            "ile", "tyle", "wiele", "mało", "dużo", "kilka", "parę",
-            
-            # Auxiliary verbs and common verbs (czasowniki posiłkowe)
-            "być", "jest", "są", "był", "była", "było", "byli", "były",
-            "będzie", "będą", "będę", "będziesz", "będziemy", "będziecie",
-            "mieć", "ma", "mam", "masz", "mamy", "macie", "mają",
-            "miał", "miała", "miało", "mieli", "miały",
-            "można", "trzeba", "należy", "warto", "wolno",
-            "zostać", "stać", "robić", "zrobić", "mówić", "powiedzieć",
-            
-            # Other common function words
-            "to", "tego", "temu", "tym", "ta", "tej", "tą",
-            "jako", "czyli", "np", "itd", "itp", "etc",
-            "pan", "pani", "państwo", "panie", "panowie",
-            "no", "ot", "hej", "cześć", "ok", "okej",
-            "xd", "xdd", "haha", "lol", "omg",  # Common internet expressions
+        # Add common internet slang/expressions (language-agnostic)
+        internet_slang = {
+            "xd", "xdd", "xddd", "lol", "lmao", "rofl", "haha", "hahaha",
+            "omg", "wtf", "btw", "idk", "imo", "imho", "tbh", "fyi",
+            "ok", "okej", "okay", "wow", "hmm", "mhm", "aha", "ooo",
+            "ps", "edit", "update", "re", "fwd",
         }
-        self._stopwords.get("pl", set()).update(polish_extras)
-        
-        # Also add some common English function words that might be mixed in Polish comments
-        english_extras = {
-            "the", "a", "an", "is", "are", "was", "were", "be", "been",
-            "i", "you", "he", "she", "it", "we", "they", "me", "him", "her",
-            "my", "your", "his", "its", "our", "their",
-            "this", "that", "these", "those",
-            "and", "or", "but", "if", "then", "so", "as", "of", "to", "for",
-            "with", "on", "in", "at", "by", "from",
-            "lol", "xd", "omg", "wtf", "btw", "idk",  # Internet slang
-        }
-        self._stopwords.get("en", set()).update(english_extras)
+        for lang_code in SUPPORTED_LANGUAGES:
+            self._stopwords[lang_code].update(internet_slang)
     
     def _load_spacy_models(self):
         """Lazy load spaCy models."""

@@ -12,6 +12,7 @@ torch>=2.0.0
 spacy>=3.7.0
 langdetect>=1.0.9
 nltk>=3.8.0
+stopwordsiso>=0.6.1
 
 # Text Analytics
 wordcloud>=1.9.0
