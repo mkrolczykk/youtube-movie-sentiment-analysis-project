@@ -46,10 +46,10 @@ class TextAnalytics:
         texts: List[str],
         language: str = "en",
         colormap: str = "viridis",
-        max_words: int = 100,
-        background_color: str = "white",
-        width: int = 800,
-        height: int = 400
+        max_words: int = 150,
+        background_color: str = "#0E1117",  # Dark theme background
+        width: int = 1200,
+        height: int = 600
     ) -> str:
         """
         Generate a word cloud from texts.
@@ -59,7 +59,7 @@ class TextAnalytics:
             language: Language for preprocessing
             colormap: Matplotlib colormap name
             max_words: Maximum number of words
-            background_color: Background color
+            background_color: Background color (dark by default for theme)
             width: Image width
             height: Image height
             
@@ -80,7 +80,7 @@ class TextAnalytics:
             # Return empty image if no text
             return self._create_empty_wordcloud(width, height)
         
-        # Generate word cloud
+        # Generate word cloud - optimized to fill entire space
         wordcloud = WordCloud(
             width=width,
             height=height,
@@ -88,8 +88,12 @@ class TextAnalytics:
             colormap=colormap,
             max_words=max_words,
             prefer_horizontal=0.7,
-            min_font_size=10,
-            max_font_size=100,
+            min_font_size=8,
+            max_font_size=None,  # Auto-calculate max font size
+            relative_scaling=0.5,  # Balance between frequency and rank
+            margin=2,  # Minimal margin to fill space
+            mode="RGBA" if background_color is None else "RGB",
+            contour_width=0,
         ).generate(combined_text)
         
         return self._wordcloud_to_base64(wordcloud)

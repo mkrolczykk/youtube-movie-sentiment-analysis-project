@@ -81,14 +81,13 @@ def display_wordcloud(base64_image: str, caption: str = ""):
     st.markdown(
         f"""
         <div style="
-            background: white;
+            background: transparent;
             border-radius: 12px;
-            padding: 1rem;
+            padding: 0;
             margin: 0.5rem 0;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         ">
             <img src="data:image/png;base64,{base64_image}" 
-                 style="width: 100%; border-radius: 8px;">
+                 style="width: 100%; height: auto; border-radius: 8px; display: block;">
         </div>
         """,
         unsafe_allow_html=True
