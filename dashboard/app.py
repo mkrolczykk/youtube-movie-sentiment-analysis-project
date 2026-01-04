@@ -239,22 +239,22 @@ def render_results():
     
     with col1:
         fig = create_sentiment_distribution_chart(sentiment_stats)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, key="sentiment_distribution")
     
     with col2:
         fig = create_sentiment_histogram(df)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, key="sentiment_histogram")
     
     # Language analysis
     col1, col2 = st.columns(2)
     
     with col1:
         fig = create_sentiment_by_language_chart(df)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, key="sentiment_by_language")
     
     with col2:
         fig = create_comment_length_sentiment_scatter(df)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, key="comment_length_scatter")
     
     st.divider()
     
@@ -286,7 +286,7 @@ def render_results():
         col1, col2 = st.columns([2, 1])
         with col1:
             fig = create_keyword_bar_chart(keywords, "Top Keywords (TF-IDF)")
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, use_container_width=True, key="keywords_chart")
         with col2:
             st.markdown("#### 📋 Keyword List")
             for word, score in keywords[:10]:
@@ -298,13 +298,13 @@ def render_results():
             st.markdown("#### Bigrams")
             bigrams = analytics.extract_ngrams(df["text"].tolist(), n=2, top_k=15, language=dominant_lang)
             fig = create_ngram_treemap(bigrams, "Most Common Bigrams")
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, use_container_width=True, key="bigrams_treemap")
         
         with col2:
             st.markdown("#### Trigrams")
             trigrams = analytics.extract_ngrams(df["text"].tolist(), n=3, top_k=15, language=dominant_lang)
             fig = create_ngram_treemap(trigrams, "Most Common Trigrams")
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, use_container_width=True, key="trigrams_treemap")
     
     with tab_topics:
         st.markdown("#### 🎯 Topic Modeling (LDA)")
@@ -318,7 +318,7 @@ def render_results():
             
             if topics:
                 fig = create_topics_bar_chart(topics)
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, use_container_width=True, key="topics_chart")
                 
                 # Topic details
                 st.markdown("#### Topic Details")
@@ -338,7 +338,7 @@ def render_results():
         
         with col1:
             fig = create_emoji_chart(emoji_data)
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, use_container_width=True, key="emoji_chart")
         
         with col2:
             st.markdown("#### 📊 Emoji Statistics")

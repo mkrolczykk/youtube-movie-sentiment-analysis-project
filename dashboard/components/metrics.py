@@ -51,7 +51,7 @@ def render_sentiment_metrics(sentiment_stats: Dict, language_stats: Dict):
     
     with col1:
         render_metric_card(
-            "Total Comments",
+            "Total Analyzed Comments",
             str(sentiment_stats.get("count", 0)),
             icon="💬",
             color="#6C63FF"
