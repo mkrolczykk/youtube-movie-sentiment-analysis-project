@@ -142,16 +142,15 @@ def create_sentiment_by_language_chart(df: pd.DataFrame) -> go.Figure:
     
     fig.update_layout(
         title=dict(text="Sentiment by Language", x=0.5, font=dict(size=16)),
-        xaxis_title="Language",
         yaxis_title="Count",
         barmode="group",
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         font=dict(color="#FAFAFA"),
-        height=350,
-        margin=dict(t=60, b=60, l=60, r=20),
-        legend=dict(orientation="h", yanchor="bottom", y=-0.25, xanchor="center", x=0.5),
-        xaxis=dict(gridcolor="#333"),
+        height=380,
+        margin=dict(t=60, b=80, l=60, r=20),
+        legend=dict(orientation="h", yanchor="top", y=-0.15, xanchor="center", x=0.5),
+        xaxis=dict(gridcolor="#333", title=None),
         yaxis=dict(gridcolor="#333")
     )
     
