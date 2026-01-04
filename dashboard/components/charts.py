@@ -573,17 +573,16 @@ def create_sentiment_over_time_chart(df: pd.DataFrame) -> go.Figure:
     
     fig.update_layout(
         title=dict(text="Sentiment Trend Over Time", x=0.5, font=dict(size=16)),
-        xaxis_title="Date",
         yaxis_title="Sentiment Score",
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         font=dict(color="#FAFAFA"),
-        height=350,
-        margin=dict(t=60, b=60, l=60, r=20),
-        xaxis=dict(gridcolor="#333"),
+        height=380,
+        margin=dict(t=60, b=80, l=60, r=20),
+        xaxis=dict(gridcolor="#333", title=None),
         yaxis=dict(gridcolor="#333", range=[-1.1, 1.1]),
         showlegend=True,
-        legend=dict(orientation="h", yanchor="top", y=-0.15, xanchor="center", x=0.5)
+        legend=dict(orientation="h", yanchor="top", y=-0.12, xanchor="center", x=0.5)
     )
     
     return fig
@@ -734,17 +733,16 @@ def create_sentiment_confidence_chart(df: pd.DataFrame) -> go.Figure:
     
     fig.update_layout(
         title=dict(text="Sentiment Confidence Distribution", x=0.5, font=dict(size=16)),
-        xaxis_title="Confidence Score",
         yaxis_title="Count",
         barmode="overlay",
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         font=dict(color="#FAFAFA"),
-        height=300,
-        margin=dict(t=60, b=60, l=60, r=20),
-        xaxis=dict(gridcolor="#333"),
+        height=330,
+        margin=dict(t=60, b=70, l=60, r=20),
+        xaxis=dict(gridcolor="#333", title=None),
         yaxis=dict(gridcolor="#333"),
-        legend=dict(orientation="h", yanchor="top", y=-0.2, xanchor="center", x=0.5)
+        legend=dict(orientation="h", yanchor="top", y=-0.15, xanchor="center", x=0.5)
     )
     
     return fig
