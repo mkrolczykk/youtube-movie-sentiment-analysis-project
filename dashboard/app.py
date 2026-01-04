@@ -71,13 +71,13 @@ def init_session_state():
         st.session_state["language_stats"] = None
 
 
-@st.cache_resource
+@st.cache_resource(show_spinner=False)
 def load_sentiment_analyzer():
     """Load and cache the sentiment analyzer."""
     return SentimentAnalyzer()
 
 
-@st.cache_resource
+@st.cache_resource(show_spinner=False)
 def load_text_analytics():
     """Load and cache text analytics."""
     return TextAnalytics()
