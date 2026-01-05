@@ -1,0 +1,48 @@
+# Docker Compose - Production Overrides
+# Usage: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+
+services:
+  sentiment-app:
+    container_name: sentiment-analysis-prod
+
+    # Production environment
+    environment:
+      - ENV=production
+      - STREAMLIT_SERVER_RUN_ON_SAVE=false
+      - STREAMLIT_SERVER_FILE_WATCHER_TYPE=none
+      - LOG_LEVEL=WARNING
+
+    # Strict resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 2G
+
+    # Always restart in production
+    restart: always
+
+    # Production logging
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+    # Production labels
+    labels:
+      - "environment=production"
+      - "app.version=1.0.0"
+
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+
+    # Read-only root filesystem (for extra security)
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /home/appuser/.cache

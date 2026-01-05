@@ -93,6 +93,45 @@ This Streamlit dashboard was created for the **Eksploracja Danych Tekstowych (Te
 6. **Open in browser**
    Navigate to `http://localhost:8501`
 
+## Docker Deployment
+
+### Quick Start with Docker
+
+```bash
+# Development (with hot reload)
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+
+# Production (detached)
+docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+```
+
+### Using Makefile (recommended)
+
+```bash
+make dev      # Run in development mode
+make prod     # Run in production mode
+make stop     # Stop containers
+make logs     # View logs
+make shell    # Open shell in container
+make clean    # Clean up everything
+```
+
+### Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `APP_PORT` | Application port | 8501 |
+| `YOUTUBE_API_KEY` | YouTube API key (optional) | - |
+| `ENV` | Environment (development/production) | development |
+
+### Docker Architecture
+
+- **Multi-stage build**: Optimized image size (~2GB with models)
+- **Pre-downloaded models**: spaCy + NLTK models included in image
+- **Health checks**: Built-in health endpoint for orchestrators
+- **Non-root user**: Security best practice
+- **Volume caching**: HuggingFace models cached between restarts
+
 ## YouTube API Key Setup
 
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
@@ -121,6 +160,16 @@ youtube-movie-sentiment-analysis-project/
 │   │   └── wordcloud.py          # Word cloud display
 │   └── styles/
 │       └── custom.css            # Custom styling
+├── scripts/                      # Docker scripts
+│   ├── entrypoint.sh             # Container startup
+│   └── healthcheck.py            # Health check endpoint
+├── .streamlit/
+│   └── config.toml               # Streamlit server config
+├── Dockerfile                    # Multi-stage Docker build
+├── docker-compose.yml            # Base compose config
+├── docker-compose.dev.yml        # Development overrides
+├── docker-compose.prod.yml       # Production overrides
+├── Makefile                      # Convenience commands
 ├── requirements.txt
 ├── .env.example
 └── README.md
@@ -130,7 +179,7 @@ youtube-movie-sentiment-analysis-project/
 
 | Component | Technology |
 |-----------|-----------|
-| Language | Python 3.9+ |
+| Language | Python 3.11.XX (tested with 3.11.9) |
 | Web Framework | Streamlit |
 | Sentiment Analysis | HuggingFace Transformers (multilingual BERT) |
 | NLP | spaCy, NLTK |

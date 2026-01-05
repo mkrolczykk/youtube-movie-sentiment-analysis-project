@@ -1,0 +1,44 @@
+# Streamlit Configuration for Container Deployment
+# Optimized for production use
+
+[global]
+# Disable development mode features
+developmentMode = false
+
+[server]
+# Server configuration
+port = 8501
+address = "0.0.0.0"
+headless = true
+enableCORS = false
+enableXsrfProtection = true
+
+# File watching (disabled in production for performance)
+runOnSave = false
+fileWatcherType = "none"
+
+# Connection settings
+maxUploadSize = 200
+
+[browser]
+# Disable browser opening (container environment)
+gatherUsageStats = false
+serverAddress = "localhost"
+serverPort = 8501
+
+[theme]
+# Dark theme configuration
+primaryColor = "#667eea"
+backgroundColor = "#0E1117"
+secondaryBackgroundColor = "#262730"
+textColor = "#FAFAFA"
+
+[logger]
+# Logging configuration
+level = "info"
+messageFormat = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+[client]
+# Client-side settings
+showErrorDetails = false
+toolbarMode = "minimal"

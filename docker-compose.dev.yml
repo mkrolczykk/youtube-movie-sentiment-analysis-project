@@ -1,0 +1,38 @@
+# Docker Compose - Development Overrides
+# Usage: docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+
+services:
+  sentiment-app:
+    container_name: sentiment-analysis-dev
+
+    # Build with development target (if needed)
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    # Development environment
+    environment:
+      - ENV=development
+      - STREAMLIT_SERVER_RUN_ON_SAVE=true
+      - STREAMLIT_SERVER_FILE_WATCHER_TYPE=auto
+      - LOG_LEVEL=DEBUG
+
+    # Mount source code for hot reload
+    volumes:
+      - ./src:/app/src:ro
+      - ./dashboard:/app/dashboard:ro
+      - ./.streamlit:/app/.streamlit:ro
+      - model-cache:/app/.cache/huggingface
+
+    # Development port
+    ports:
+      - "${APP_PORT:-8501}:8501"
+
+    # No resource limits in development
+    # Override restart policy for development
+    restart: "no"
+
+    # Development labels
+    labels:
+      - "environment=development"
+      - "app.version=dev"
