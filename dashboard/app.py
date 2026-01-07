@@ -73,6 +73,8 @@ def init_session_state():
         st.session_state["sentiment_stats"] = None
     if "language_stats" not in st.session_state:
         st.session_state["language_stats"] = None
+    if "text_analytics_module" not in st.session_state:
+        st.session_state["text_analytics_module"] = None
 
 
 @st.cache_resource(show_spinner=False)
@@ -99,7 +101,7 @@ def run_analysis(video_url: str, num_comments: int, api_key: str):
     # Initialize components
     client = YouTubeClient(api_key)
     analyzer = load_sentiment_analyzer()
-    analytics = load_text_analytics()
+    st.session_state["text_analytics_module"] = load_text_analytics()
     
     # Extract video ID
     video_id = YouTubeClient.extract_video_id(video_url)
@@ -219,7 +221,7 @@ def render_results():
     video_metadata = st.session_state["video_metadata"]
     sentiment_stats = st.session_state["sentiment_stats"]
     language_stats = st.session_state["language_stats"]
-    analytics = load_text_analytics()
+    analytics = st.session_state["text_analytics_module"]
     
     # Video header
     render_video_header(video_metadata)
