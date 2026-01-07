@@ -16,7 +16,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.config import DASHBOARD_CONFIG, COLORS
 from src.youtube_client import YouTubeClient, YouTubeAPIError, CommentsDisabledError
-from src.language_detector import detect_language, get_language_statistics, categorize_by_language
+from src.language_detector import detect_language, get_language_statistics
 from src.sentiment_analyzer import SentimentAnalyzer
 from src.text_preprocessor import TextPreprocessor
 from src.text_analytics import TextAnalytics

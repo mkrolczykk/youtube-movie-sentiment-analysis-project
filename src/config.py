@@ -36,9 +36,6 @@ LANGUAGE_NAMES = {
 # Multilingual BERT model for sentiment analysis (supports Polish and English)
 SENTIMENT_MODEL = "nlptown/bert-base-multilingual-uncased-sentiment"
 
-# Emotion detection model
-EMOTION_MODEL = "j-hartmann/emotion-english-distilroberta-base"
-
 # Sentiment thresholds
 SENTIMENT_THRESHOLDS = {
     "positive": 0.33,   # score > 0.33 is positive

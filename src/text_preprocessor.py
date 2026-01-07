@@ -106,7 +106,7 @@ class TextPreprocessor:
             except OSError:
                 pass  # Language not available in NLTK
             
-            # Tertiary source: spaCy stopwords (if model loaded)
+            # Third source: spaCy stopwords (if model loaded)
             try:
                 import spacy
                 model_name = SPACY_MODELS.get(lang_code)
